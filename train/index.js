@@ -1,7 +1,5 @@
-const tf = require('@tensorflow/tfjs-node-gpu');
 const dataset = require('./dataset');
 const model = require('./model');
-const { data, imag } = require('@tensorflow/tfjs-node-gpu');
 
 async function Run(epochs, batchSize) {
     dataset.Load();
@@ -12,7 +10,7 @@ async function Run(epochs, batchSize) {
     
     model.summary();
 
-    const validationSplit = 0.15;
+    const validationSplit = 0.2;
     await model.fit(data.images, data.labels, {
         epochs,
         batchSize,
@@ -29,4 +27,4 @@ async function Run(epochs, batchSize) {
     console.log('Model saved');
 }
 
-Run(1, 32);
+Run(2, 32);

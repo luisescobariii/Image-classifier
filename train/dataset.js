@@ -6,30 +6,37 @@ const path = require('path');
 
 const dataDir = './data';
 
-function LoadImages(testSize = 0.3) {
+const maxCategories = 5;
+
+function LoadImages(testSize = 0.2) {
     const data = {
         train: { images: [], labels: [] },
         test: { images: [], labels: [] },
     };
+
+    let maxFolders = maxCategories * 1;
     
     const directories = fs.readdirSync(dataDir);
+    let directoryIndex = -1;
     const images = [];
     const labels = [];
     const testFiles = [];
     for (const dir of directories) {
+        directoryIndex++;
+        if (maxFolders-- === 0) { break; }
         const files = fs.readdirSync(path.join(dataDir, dir));
         let testFileCount = Math.floor(files.length * testSize);
+        
         for (const file of files) {
             images.push(path.join(dataDir, dir, file));
-            labels.push(dir);
-            testFiles.push(testFileCount-- > 0 ? true : false);
+            labels.push(directoryIndex);
+            testFiles.push(testFileCount-- > 0);
         }
     }
     
     const totalFiles = images.length;
     for (let i = 0; i < totalFiles; i++) {
         const percent = ((i / totalFiles) * 100).toFixed(0);
-        process.stdout.clearLine();
         process.stdout.cursorTo(0);
         process.stdout.write(`Loading images... ${i}/${totalFiles} ${percent}%`);
         
@@ -70,14 +77,14 @@ class Dataset {
     GetTrainData() {
         return {
             images: tf.concat(this.trainData.images),
-            labels: tf.oneHot(tf.tensor1d(this.trainData.labels, 'int32'), 2).toFloat(),
+            labels: tf.oneHot(tf.tensor1d(this.trainData.labels, 'int32'), maxCategories).toFloat(),
         };
     }
 
     GetTestData() {
         return {
             images: tf.concat(this.testData.images),
-            labels: tf.oneHot(tf.tensor1d(this.testData.labels, 'int32'), 2).toFloat(),
+            labels: tf.oneHot(tf.tensor1d(this.testData.labels, 'int32'), maxCategories).toFloat(),
         };
     }
 

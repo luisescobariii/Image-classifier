@@ -33,11 +33,11 @@ model.add(tf.layers.flatten());
 
 model.add(tf.layers.dense({units: 256, activation: 'relu'}));
 model.add(tf.layers.dropout({rate: 0.3}));
-model.add(tf.layers.dense({units: 2, activation: 'softmax'}));
+model.add(tf.layers.dense({units: 5, activation: 'softmax'}));
 
 model.compile({
     optimizer: tf.train.adam(0.0001),
-    loss: 'binaryCrossentropy',
+    loss: 'categoricalCrossentropy',
     metrics: ['accuracy'],
 });
 
